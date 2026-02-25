@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>陸彥廷 · 像素個人頁</title>
+  <meta name="description" content="陸彥廷的像素風格個人履歷頁，SEO 工程師 / 網路行銷 / 在職碩士生" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0d0d1a;
+      --panel: #1a1a2e;
+      --border: #4a4a8a;
+      --accent: #6c63ff;
+      --accent2: #ff6584;
+      --green: #00e676;
+      --yellow: #ffe066;
+      --text: #e0e0ff;
+      --dim: #8888bb;
+      --pixel: 4px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans TC', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Scanline overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 3px,
+        rgba(0,0,0,.15) 3px,
+        rgba(0,0,0,.15) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Stars ── */
+    #stars { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+    .star {
+      position: absolute;
+      width: 2px; height: 2px;
+      background: #fff;
+      animation: twinkle var(--d, 3s) var(--delay, 0s) infinite alternate;
+    }
+    @keyframes twinkle { from { opacity: .2; } to { opacity: 1; } }
+
+    /* ── Header / Hero ── */
+    header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px 40px;
+      background: linear-gradient(180deg, #0a0a1f 0%, var(--bg) 100%);
+      border-bottom: 4px solid var(--border);
+    }
+
+    .pixel-box {
+      image-rendering: pixelated;
+      border: 4px solid var(--accent);
+      box-shadow: 4px 4px 0 var(--accent2), 8px 8px 0 rgba(108,99,255,.3);
+      background: var(--panel);
+      padding: 4px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+    .pixel-box img {
+      display: block;
+      width: 140px;
+      height: 140px;
+      object-fit: cover;
+      image-rendering: pixelated;
+    }
+
+    /* HP / MP bar row */
+    .stat-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .bar-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--dim); font-family: 'Press Start 2P', monospace; }
+    .bar-track {
+      width: 140px; height: 10px;
+      background: #222244;
+      border: 2px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      animation: grow 1.2s ease-out forwards;
+    }
+    @keyframes grow { from { width: 0; } }
+    .bar-fill.hp { background: var(--green); }
+    .bar-fill.mp { background: var(--accent); }
+    .bar-fill.xp { background: var(--yellow); }
+
+    .pixel-name {
+      font-family: 'Press Start 2P', monospace;
+      font-size: clamp(14px, 3vw, 22px);
+      color: var(--accent);
+      text-shadow: 3px 3px 0 var(--accent2);
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+    }
+    .pixel-subtitle {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: var(--yellow);
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .tag-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .tag {
+      font-size: 11px;
+      border: 2px solid var(--accent);
+      color: var(--accent);
+      padding: 3px 8px;
+      font-family: 'Press Start 2P', monospace;
+      background: rgba(108,99,255,.1);
+      cursor: default;
+      transition: background .2s, color .2s;
+    }
+    .tag:hover { background: var(--accent); color: #fff; }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      background: var(--panel);
+      border-bottom: 4px solid var(--border);
+    }
+    nav a {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: var(--dim);
+      text-decoration: none;
+      padding: 14px 20px;
+      border-right: 2px solid var(--border);
+      transition: color .2s, background .2s;
+    }
+    nav a:first-child { border-left: 2px solid var(--border); }
+    nav a:hover, nav a.active { color: var(--yellow); background: rgba(255,224,102,.08); }
+
+    /* ── Main layout ── */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      gap: 60px;
+    }
+
+    /* ── Section ── */
+    section { scroll-margin-top: 60px; }
+
+    .section-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      color: var(--yellow);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::before { content: '▶'; color: var(--accent2); }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 2px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    /* ── Info card ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .info-item {
+      background: var(--panel);
+      border: 2px solid var(--border);
+      padding: 14px;
+      position: relative;
+      transition: border-color .2s, transform .2s;
+    }
+    .info-item:hover { border-color: var(--accent); transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--accent); }
+    .info-label {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      color: var(--dim);
+      margin-bottom: 8px;
+    }
+    .info-value { font-size: 14px; color: var(--text); font-weight: 700; }
+
+    /* ── Timeline ── */
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .tl-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 16px;
+    }
+    .tl-dot-col { display: flex; flex-direction: column; align-items: center; }
+    .tl-dot {
+      width: 16px; height: 16px;
+      border: 4px solid var(--accent);
+      background: var(--bg);
+      flex-shrink: 0;
+      position: relative;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    .tl-item:not(:last-child) .tl-dot-col::after {
+      content: '';
+      flex: 1;
+      width: 2px;
+      background: var(--border);
+      margin: 4px 0;
+      min-height: 20px;
+    }
+    @keyframes pulse-dot { 0%,100% { box-shadow: 0 0 0 0 rgba(108,99,255,.6); } 50% { box-shadow: 0 0 0 6px rgba(108,99,255,0); } }
+
+    .tl-body {
+      background: var(--panel);
+      border: 2px solid var(--border);
+      padding: 16px;
+      margin-bottom: 16px;
+      transition: border-color .2s;
+    }
+    .tl-body:hover { border-color: var(--accent); }
+    .tl-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+    .tl-company { font-size: 12px; color: var(--yellow); margin-bottom: 8px; font-weight: 700; }
+    .tl-desc { font-size: 13px; color: var(--dim); line-height: 1.7; }
+
+    /* ── Skill bars ── */
+    .skill-list { display: flex; flex-direction: column; gap: 14px; }
+    .skill-row { display: flex; flex-direction: column; gap: 4px; }
+    .skill-meta { display: flex; justify-content: space-between; font-size: 12px; }
+    .skill-name { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--text); }
+    .skill-pct { font-size: 11px; color: var(--dim); }
+    .skill-track {
+      height: 14px;
+      background: #222244;
+      border: 2px solid var(--border);
+      overflow: hidden;
+    }
+    .skill-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      animation: grow 1.4s ease-out forwards;
+      position: relative;
+    }
+    .skill-fill::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 0; right: 0;
+      height: 3px;
+      background: rgba(255,255,255,.3);
+    }
+
+    /* ── Cert cards ── */
+    .cert-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .cert-card {
+      background: var(--panel);
+      border: 2px solid var(--border);
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      transition: border-color .2s, transform .2s;
+    }
+    .cert-card:hover { border-color: var(--green); transform: translate(-2px,-2px); box-shadow: 4px 4px 0 var(--green); }
+    .cert-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 6px var(--accent));
+    }
+    .cert-name { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--green); margin-bottom: 6px; line-height: 1.6; }
+    .cert-type { font-size: 11px; color: var(--dim); }
+
+    /* ── Trait chips ── */
+    .trait-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .trait {
+      background: var(--panel);
+      border: 2px solid var(--accent2);
+      color: var(--accent2);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      padding: 8px 12px;
+      transition: background .2s;
+    }
+    .trait:hover { background: rgba(255,101,132,.15); }
+
+    /* ── Hobby ── */
+    .hobby-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .hobby-card {
+      background: var(--panel);
+      border: 2px solid var(--border);
+      padding: 20px 16px;
+      text-align: center;
+      transition: transform .2s, border-color .2s;
+    }
+    .hobby-card:hover { transform: translateY(-4px); border-color: var(--yellow); }
+    .hobby-icon { font-size: 36px; margin-bottom: 10px; display: block; }
+    .hobby-title { font-family: 'Press Start 2P', monospace; font-size: 8px; color: var(--yellow); margin-bottom: 8px; }
+    .hobby-desc { font-size: 12px; color: var(--dim); line-height: 1.7; }
+
+    /* ── Quote ── */
+    .quote-box {
+      background: var(--panel);
+      border-left: 6px solid var(--accent);
+      padding: 20px 24px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.8;
+      font-style: italic;
+      position: relative;
+    }
+    .quote-box::before {
+      content: '"';
+      font-family: 'Press Start 2P', monospace;
+      font-size: 48px;
+      color: var(--accent);
+      opacity: .2;
+      position: absolute;
+      top: -8px; left: 8px;
+      line-height: 1;
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 20px;
+      border-top: 4px solid var(--border);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      color: var(--dim);
+    }
+    footer span { color: var(--accent2); }
+
+    /* ── Cursor blink ── */
+    .blink { animation: blink .8s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── Scroll reveal ── */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s, transform .6s; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      nav a { font-size: 7px; padding: 12px 10px; }
+      .pixel-name { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<!-- ══ HEADER ══ -->
+<header>
+  <div class="pixel-box">
+    <img src="pixel_avatar.png" alt="陸彥廷 像素頭像" />
+  </div>
+
+  <div class="stat-bars">
+    <div class="bar-row">
+      <span>HP</span>
+      <div class="bar-track"><div class="bar-fill hp" style="width:92%"></div></div>
+      <span>92</span>
+    </div>
+    <div class="bar-row">
+      <span>MP</span>
+      <div class="bar-track"><div class="bar-fill mp" style="width:88%"></div></div>
+      <span>88</span>
+    </div>
+    <div class="bar-row">
+      <span>XP</span>
+      <div class="bar-track"><div class="bar-fill xp" style="width:75%"></div></div>
+      <span>75</span>
+    </div>
+  </div>
+
+  <h1 class="pixel-name">LU YAN-TING<span class="blink">_</span></h1>
+  <p class="pixel-subtitle">SEO ENGINEER &amp; WEB MARKETER</p>
+
+  <div class="tag-row">
+    <span class="tag">桃園 ♦</span>
+    <span class="tag">水瓶座 ♦</span>
+    <span class="tag">5 YRS EXP</span>
+    <span class="tag">在職碩士生</span>
+  </div>
+</header>
+
+<!-- ══ NAV ══ -->
+<nav id="navbar">
+  <a href="#about" class="active">ABOUT</a>
+  <a href="#work">WORK</a>
+  <a href="#skills">SKILLS</a>
+  <a href="#certs">CERTS</a>
+  <a href="#trait">CHAR</a>
+  <a href="#life">LIFE</a>
+</nav>
+
+<!-- ══ MAIN ══ -->
+<main>
+
+  <!-- ABOUT -->
+  <section id="about" class="reveal">
+    <h2 class="section-title">個人檔案</h2>
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">NAME</div>
+        <div class="info-value">陸彥廷</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">HOMETOWN</div>
+        <div class="info-value">桃園市</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">AGE</div>
+        <div class="info-value">30</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">EDUCATION</div>
+        <div class="info-value">長榮大學 醫務管理 / 生技</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">CURRENT</div>
+        <div class="info-value">華凌光電 品牌部 高級工程師</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">GOAL</div>
+        <div class="info-value">AI × 大數據 × 數位行銷</div>
+      </div>
+    </div>
+
+    <br />
+    <div class="quote-box">
+      透過對不斷精進專業知識和自我要求，盡善盡美地達成被賦予的任務，是成就感的來源。
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section id="work" class="reveal">
+    <h2 class="section-title">職業經歷</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-title">現職</div>
+          <div class="tl-company">⚡ 華凌光電股份有限公司 · 高級工程師</div>
+          <div class="tl-desc">負責 SEO 操作規劃、網站數據分析、社群管理，並完成 Google 同意聲明模式 v2（GDPR）導入。</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-title">前職</div>
+          <div class="tl-company">🚚 日興搬家起重行 · SEO Specialist</div>
+          <div class="tl-desc">撰寫技術文章，一年內創造 <strong style="color:var(--green)">236 萬次曝光</strong> 及 16.7 萬次自然流量。</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-title">前職</div>
+          <div class="tl-company">🏥 輔大醫院骨科暨運動醫學中心 · SEO Specialist</div>
+          <div class="tl-desc">主攻「運動醫學中心」關鍵字，成功排名 Google <strong style="color:var(--yellow)">前三名</strong>。</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot-col"><div class="tl-dot"></div></div>
+        <div class="tl-body">
+          <div class="tl-title">前職</div>
+          <div class="tl-company">🍵 崧園茗茶裝 · 網路行銷企劃暨網站工程師</div>
+          <div class="tl-desc">電商網站架設 + SEO 規劃，每年平均帶來 <strong style="color:var(--accent2)">60+</strong> 潛在客戶。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="reveal">
+    <h2 class="section-title">技能樹</h2>
+    <div class="skill-list">
+      <div class="skill-row">
+        <div class="skill-meta"><span class="skill-name">SEO STRATEGY</span><span class="skill-pct">95%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="width:95%"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-meta"><span class="skill-name">WEB ANALYTICS (GA4)</span><span class="skill-pct">90%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="width:90%"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-meta"><span class="skill-name">WEBSITE DEVELOPMENT</span><span class="skill-pct">80%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="width:80%"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-meta"><span class="skill-name">DATA ANALYSIS</span><span class="skill-pct">75%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="width:75%"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-meta"><span class="skill-name">SOCIAL MEDIA MGT</span><span class="skill-pct">85%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="width:85%"></div></div>
+      </div>
+      <div class="skill-row">
+        <div class="skill-meta"><span class="skill-name">AI / MACHINE LEARNING</span><span class="skill-pct">40%</span></div>
+        <div class="skill-track"><div class="skill-fill" style="width:40%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTS -->
+  <section id="certs" class="reveal">
+    <h2 class="section-title">證照 &amp; 培訓</h2>
+    <div class="cert-grid">
+      <div class="cert-card">
+        <div class="cert-icon">🎓</div>
+        <div>
+          <div class="cert-name">Google 數位行銷基礎知識認證</div>
+          <div class="cert-type">認證</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">🔍</div>
+        <div>
+          <div class="cert-name">HubSpot SEO Certification</div>
+          <div class="cert-type">認證</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">📊</div>
+        <div>
+          <div class="cert-name">Google Analytics 個人認證資格</div>
+          <div class="cert-type">認證</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">🏆</div>
+        <div>
+          <div class="cert-name">Ultimate SEO Training 2023</div>
+          <div class="cert-type">培訓 · Joshua George</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">💻</div>
+        <div>
+          <div class="cert-name">2022 網頁開發全攻略</div>
+          <div class="cert-type">培訓 · Wilson Ren / Udemy</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">📈</div>
+        <div>
+          <div class="cert-name">GA4 新手完全攻略</div>
+          <div class="cert-type">培訓 · 圖靈數位</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHARACTER TRAITS -->
+  <section id="trait" class="reveal">
+    <h2 class="section-title">個人特質</h2>
+    <div class="trait-grid">
+      <div class="trait">♒ 水瓶座</div>
+      <div class="trait">🧠 獨立思考</div>
+      <div class="trait">💡 強烈創造力</div>
+      <div class="trait">🤝 樂於助人</div>
+      <div class="trait">🔄 PDCA 思維</div>
+      <div class="trait">👥 良好溝通</div>
+      <div class="trait">📚 持續學習</div>
+      <div class="trait">🎯 自我要求</div>
+    </div>
+
+    <br />
+    <h2 class="section-title">學術成就</h2>
+    <div class="cert-grid">
+      <div class="cert-card">
+        <div class="cert-icon">🥇</div>
+        <div>
+          <div class="cert-name">TRANS-ACTION 跨界超越競賽 半決賽</div>
+          <div class="cert-type">健康照護組</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">🏛️</div>
+        <div>
+          <div class="cert-name">醫務管理系學會 會長</div>
+          <div class="cert-type">社團領導</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon">🎮</div>
+        <div>
+          <div class="cert-name">教學式互動遊戲設計 × 3 款</div>
+          <div class="cert-type">Google Sheet / PowerPoint / Gather</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIFE -->
+  <section id="life" class="reveal">
+    <h2 class="section-title">生活習慣</h2>
+    <div class="hobby-grid">
+      <div class="hobby-card">
+        <span class="hobby-icon">🌅</span>
+        <div class="hobby-title">晨間自學</div>
+        <div class="hobby-desc">每天上班前 30–60 分鐘學習 AI 與大數據技術。</div>
+      </div>
+      <div class="hobby-card">
+        <span class="hobby-icon">🏋️</span>
+        <div class="hobby-title">自主訓練</div>
+        <div class="hobby-desc">晚飯後 60–90 分鐘健身，加上不定期羽毛球。</div>
+      </div>
+      <div class="hobby-card">
+        <span class="hobby-icon">📖</span>
+        <div class="hobby-title">大量閱讀</div>
+        <div class="hobby-desc">通勤時閱讀行銷、IT、數據分析書籍，善用碎片時間。</div>
+      </div>
+      <div class="hobby-card">
+        <span class="hobby-icon">⚙️</span>
+        <div class="hobby-title">Side Projects</div>
+        <div class="hobby-desc">持續開發 Side Project 提升專業能力並與團隊分享。</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <p>&copy; 2025 <span>陸彥廷</span> · PRESS START TO PLAY<span class="blink">▮</span></p>
+</footer>
+
+<script>
+  /* ── Stars ── */
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s`;
+    starsEl.appendChild(s);
+  }
+
+  /* ── Scroll reveal ── */
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => io.observe(r));
+
+  /* ── Nav active ── */
+  const sections = document.querySelectorAll('main section');
+  const navLinks = document.querySelectorAll('nav a');
+  const navIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+      }
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
+  sections.forEach(s => navIO.observe(s));
+</script>
+</body>
+</html>
